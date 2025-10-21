@@ -1,0 +1,6 @@
+.direnv
+.envrc.cache
+result
+*.fasl
+.ediprolog-tmp
+*/.ediprolog-tmp
