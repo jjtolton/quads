@@ -254,8 +254,9 @@ See the `example/` directory for complete working examples of both monadic and b
 
 ## Credits
 
-- Based on the quadtests framework from Scryer Prolog's numerics library
+- Based on the quadtests framework from [Scryer Prolog's numerics library](https://github.com/mthom/scryer-prolog/blob/master/src/lib/numerics/quadtests.pl)
 - Binary quad syntax inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl)
+- Additional inspiration from [@dcnorris](https://github.com/dcnorris) and the numerics/quads work
 - Adapted into a generic reusable package by Jay Tolton
 
 ## License
