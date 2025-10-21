@@ -31,7 +31,7 @@ Inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.a
 my_append([1,2], [3,4], Xs) ?- Xs = [1,2,3,4].
 ```
 
-**Status**: Binary quad syntax requires a patched version of Scryer Prolog. See the Roadmap section below.
+**⚠️ Status**: Binary quad syntax **does not currently work** with standard Scryer Prolog. It requires a patched version that has not yet been merged upstream. See the Roadmap section below for details on the patch.
 
 ## Installation
 
@@ -222,23 +222,29 @@ my_pred(X) ?- X = value.
 
 #### Current Status
 
-- ✅ Quads module processes both syntaxes
-- ✅ Binary quads emit: `quad(pass, Goal)` or `quad(fail, Goal)`
+- ✅ Quads module ready to process both syntaxes
+- ✅ Binary quads will emit: `quad(pass, Goal)` or `quad(fail, Goal)`
 - ✅ Monadic quads emit: `quad(fail, Answer)` on failure only
-- 🚧 Requires Scryer Prolog patch (see below)
+- ❌ **Binary syntax does not work yet** - requires Scryer Prolog patch (see below)
 
-#### Scryer Prolog Patch
+#### Scryer Prolog Patch (Required for Binary Quads)
 
-To use binary quads, you need a patched version of Scryer Prolog:
+Binary quad syntax **currently does not work** with standard Scryer Prolog. To use it, you need a patched version:
 
-**Branch**: `binary-quad-syntax` (based on upstream master)
+**Patch Location**: Branch `binary-quad-syntax` at https://github.com/jjtolton/scryer-prolog
+**Based on**: Scryer Prolog upstream master
 **Changes**:
 1. `src/loader.pl` - Skip binary quad terms during loading
 2. `src/parser/ast.rs` - Define `?-` as infix operator (xfx, 1200)
 
 **Why needed**: Without the patch, Scryer tries to compile `Goal ?- Answer` as regular clauses, causing `permission_error(modify,static_procedure)` errors.
 
-**Status**: Patch is ready for upstream submission. Once merged, binary quads will work with standard Scryer Prolog.
+**Status**:
+- Patch is ready and tested
+- Not yet submitted to upstream
+- Once merged into Scryer Prolog, binary quads will work out of the box
+
+**For now**: Use only the monadic quad syntax (`?- Goal` followed by `Answer`) which works with all versions of Scryer Prolog.
 
 ### Future Plans
 
