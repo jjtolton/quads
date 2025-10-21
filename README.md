@@ -28,7 +28,8 @@ A "quad" consists of:
 Inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl), we're working on supporting a more concise binary syntax:
 
 ```prolog
-my_append([1,2], [3,4], Xs) ?- Xs = [1,2,3,4].
+'test of my_append([1,2], [3,4], Xs)' ?- my_append([1,2], [3,4], Xs).
+   Xs = [1,2,3,4].
 ```
 
 **⚠️ Status**: Binary quad syntax **does not currently work** with standard Scryer Prolog. It requires a patched version that has not yet been merged upstream. See the Roadmap section below for details on the patch.
@@ -217,7 +218,14 @@ Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/i
 
 **New (Binary)**:
 ```prolog
-my_pred(X) ?- X = value.
+'test of my_pred(X)' ?- my_pred(X).
+   X = value.
+   
+%% or
+
+'test of my_pred(X)' 
+?- my_pred(X).
+   X = value.
 ```
 
 #### Current Status
