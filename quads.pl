@@ -41,9 +41,9 @@ check_quads_([Q-QVN, A-AVN|Rest], Module) :-
     Q = (?- _),
     check_qu_ad_in_module(Module, Q-QVN, A-AVN),
     check_quads_(Rest, Module).
-check_quads_([T-VN|Rest], Module) :-
-    T = (G ?- A),
-    check_binary_quad(Module, G, A, VN),
+check_quads_([T-TVN, A-AVN|Rest], Module) :-
+    T = (_Label ?- Query),
+    check_binary_quad(Module, Query, A, TVN, AVN),
     check_quads_(Rest, Module).
 check_quads_([_|Rest], Module) :-
     check_quads_(Rest, Module).
@@ -78,15 +78,10 @@ terms_quads([Term1, Term2|Terms], Quads) :-
         Quads = [Term1, Term2|Quads_],
         terms_quads(Terms, Quads_)
     ;   Q = (_ ?- _) ->
-        Quads = [Term1|Quads_],
-        terms_quads([Term2|Terms], Quads_)
+        Quads = [Term1, Term2|Quads_],
+        terms_quads(Terms, Quads_)
     ;   terms_quads([Term2|Terms], Quads)
     ).
-terms_quads([Term|Terms], Quads) :-
-    Term = Q-_,
-    Q = (_ ?- _),
-    Quads = [Term|Quads_],
-    terms_quads(Terms, Quads_).
 terms_quads([_], []).
 terms_quads([], []).
 
@@ -104,25 +99,26 @@ zip([X|Xs], [Y|Ys], [X,Y|XYs]) :-
     zip(Xs, Ys, XYs).
 zip([], [], []).
 
-check_binary_quad(Module, G, A, VN) :-
-    (   check_binary_quad_(Module, G, A, VN) ->
-        format("quad(pass, ~q).~n", [G])
-    ;   format("quad(fail, ~q).~n", [G]),
+check_binary_quad(Module, Query, Answer, QVN, AVN) :-
+    (   check_binary_quad_(Module, Query, Answer, QVN, AVN) ->
+        format("quad(pass, ~q).~n", [Query])
+    ;   format("quad(fail, ~q).~n", [Query]),
         fail
     ).
 
-check_binary_quad_(Module, G, A, VN) :-
-    (   A == true -> (Module:call(G), !)
-    ;   A == false -> (\+ Module:call(G), !)
-    ;   phrase(unconj(A), As) ->
+check_binary_quad_(Module, Query, Answer, QVN, AVN) :-
+    unify_var_names(QVN, AVN),
+    (   Answer == true -> (Module:call(Query), !)
+    ;   Answer == false -> (\+ Module:call(Query), !)
+    ;   phrase(unconj(Answer), As) ->
         (   length(As, N),
-            n_answers(N, A, VN, ADs),
-            n_answers(N, Module:G, VN, Answers),
+            n_answers(N, Answer, AVN, ADs),
+            n_answers(N, Module:Query, QVN, Answers),
             maplist(contains, ADs, Answers),
             !
         )
-    ;   (Module:call(G), !,
-        Module:call(A))
+    ;   (Module:call(Query), !,
+        Module:call(Answer))
     ).
 
 check_qu_ad(Q-QVN, A-AVN) :-
