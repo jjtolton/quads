@@ -23,16 +23,16 @@ A "quad" consists of:
    Xs = [1,2,3,4].
 ```
 
-### Binary Quad Syntax (Experimental)
+### Dyadic Quad Syntax (Experimental)
 
-Inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl), we're working on supporting a more concise binary syntax:
+Inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl), we're working on supporting a more concise dyadic syntax:
 
 ```prolog
 'test of my_append([1,2], [3,4], Xs)' ?- my_append([1,2], [3,4], Xs).
    Xs = [1,2,3,4].
 ```
 
-**⚠️ Status**: Binary quad syntax **does not currently work** with standard Scryer Prolog. It requires a patched version that has not yet been merged upstream. See the Roadmap section below for details on the patch.
+**⚠️ Status**: Dyadic quad syntax **does not currently work** with standard Scryer Prolog. It requires a patched version that has not yet been merged upstream. See the Roadmap section below for details on the patch.
 
 ## Installation
 
@@ -131,7 +131,7 @@ scryer-prolog -g main
 
 ### Output
 
-**Binary quads** always emit output:
+**Dyadic quads** always emit output:
 ```
 quad(pass, my_append([1,2],[3,4],[1,2,3,4])).
 quad(fail, my_append([1,2],[3,4],[9,9,9])).
@@ -206,9 +206,9 @@ Use `...` to indicate more solutions exist:
 
 ## Roadmap
 
-### Binary Quad Syntax Support
+### Dyadic Quad Syntax Support
 
-Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl), we're adding support for a more compact binary quad syntax:
+Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl), we're adding support for a more compact dyadic quad syntax:
 
 **Traditional (Monadic)**:
 ```prolog
@@ -216,14 +216,14 @@ Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/i
    X = value.
 ```
 
-**New (Binary)**:
+**New (Dyadic)**:
 ```prolog
 'test of my_pred(X)' ?- my_pred(X).
    X = value.
-   
+
 %% or
 
-'test of my_pred(X)' 
+'test of my_pred(X)'
 ?- my_pred(X).
    X = value.
 ```
@@ -231,19 +231,19 @@ Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/i
 #### Current Status
 
 - ✅ Quads module ready to process both syntaxes
-- ✅ Binary quads will emit: `quad(pass, Goal)` or `quad(fail, Goal)`
+- ✅ Dyadic quads will emit: `quad(pass, Goal)` or `quad(fail, Goal)`
 - ✅ Monadic quads emit: `quad(fail, Answer)` on failure only
-- ❌ **Binary syntax does not work yet** - requires Scryer Prolog patch (see below)
+- ❌ **Dyadic syntax does not work yet** - requires Scryer Prolog patch (see below)
 
-#### Scryer Prolog Patch (Required for Binary Quads)
+#### Scryer Prolog Patch (Required for Dyadic Quads)
 
-Binary quad syntax **currently does not work** with standard Scryer Prolog. To use it, you need a patched version:
+Dyadic quad syntax **currently does not work** with standard Scryer Prolog. To use it, you need a patched version:
 
 **Patch Location**: Branch `binary-quad-syntax` at https://github.com/jjtolton/scryer-prolog
-**Upstream PR**: [#3132](https://github.com/mthom/scryer-prolog/pull/3132) - Add binary quad syntax support (proof of concept)
+**Upstream PR**: [#3132](https://github.com/mthom/scryer-prolog/pull/3132) - Add dyadic quad syntax support (proof of concept)
 **Based on**: Scryer Prolog upstream master
 **Changes**:
-1. `src/loader.pl` - Skip binary quad terms and their answer descriptions during loading
+1. `src/loader.pl` - Skip dyadic quad terms and their answer descriptions during loading
 2. `src/parser/ast.rs` - Define `?-` as infix operator (xfx, 1200)
 
 **Why needed**: Without the patch, Scryer tries to compile `Goal ?- Answer` as regular clauses, causing `permission_error(modify,static_procedure)` errors.
@@ -252,7 +252,7 @@ Binary quad syntax **currently does not work** with standard Scryer Prolog. To u
 - ✅ Patch is ready and tested
 - ✅ PR submitted to upstream (see [#3132](https://github.com/mthom/scryer-prolog/pull/3132))
 - ⏳ Awaiting review and potential merge
-- Once merged into Scryer Prolog, binary quads will work out of the box
+- Once merged into Scryer Prolog, dyadic quads will work out of the box
 
 **Note**: The PR is submitted as a proof-of-concept. The Scryer maintainers may choose to reimplement the feature differently.
 
@@ -268,12 +268,12 @@ Binary quad syntax **currently does not work** with standard Scryer Prolog. To u
 
 ## Example
 
-See the `example/` directory for complete working examples of both monadic and binary quad syntax.
+See the `example/` directory for complete working examples of both monadic and dyadic quad syntax.
 
 ## Credits
 
 - Based on the quadtests framework from [Scryer Prolog's numerics library](https://github.com/mthom/scryer-prolog/blob/master/src/lib/numerics/quadtests.pl)
-- Binary quad syntax inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl)
+- Dyadic quad syntax inspired by [Ulrich Neumerkel's length_quad.pl](https://www.complang.tuwien.ac.at/ulrich/iso-prolog/length_quad.pl)
 - Additional inspiration from [@dcnorris](https://github.com/dcnorris) and the numerics/quads work
 - Adapted into a generic reusable package by Jay Tolton
 
