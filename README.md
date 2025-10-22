@@ -240,17 +240,21 @@ Inspired by [Ulrich Neumerkel's work](https://www.complang.tuwien.ac.at/ulrich/i
 Binary quad syntax **currently does not work** with standard Scryer Prolog. To use it, you need a patched version:
 
 **Patch Location**: Branch `binary-quad-syntax` at https://github.com/jjtolton/scryer-prolog
+**Upstream PR**: [#3132](https://github.com/mthom/scryer-prolog/pull/3132) - Add binary quad syntax support (proof of concept)
 **Based on**: Scryer Prolog upstream master
 **Changes**:
-1. `src/loader.pl` - Skip binary quad terms during loading
+1. `src/loader.pl` - Skip binary quad terms and their answer descriptions during loading
 2. `src/parser/ast.rs` - Define `?-` as infix operator (xfx, 1200)
 
 **Why needed**: Without the patch, Scryer tries to compile `Goal ?- Answer` as regular clauses, causing `permission_error(modify,static_procedure)` errors.
 
 **Status**:
-- Patch is ready and tested
-- Not yet submitted to upstream
+- ✅ Patch is ready and tested
+- ✅ PR submitted to upstream (see [#3132](https://github.com/mthom/scryer-prolog/pull/3132))
+- ⏳ Awaiting review and potential merge
 - Once merged into Scryer Prolog, binary quads will work out of the box
+
+**Note**: The PR is submitted as a proof-of-concept. The Scryer maintainers may choose to reimplement the feature differently.
 
 **For now**: Use only the monadic quad syntax (`?- Goal` followed by `Answer`) which works with all versions of Scryer Prolog.
 
