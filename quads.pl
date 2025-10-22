@@ -72,6 +72,17 @@ read_terms_(Stream, Terms0, Terms) :-
     ;   read_terms_(Stream, [Term-VarNames|Terms0], Terms)
     ).
 
+terms_quads([Term1, Term2, Term3|Terms], Quads) :-
+    Term1 = Label-LVN,
+    Term2 = Query-_QVN,
+    Term3 = _Answer-_AVN,
+    Query = (?- Q),
+    \+ (Label = (?- _)),
+    \+ (Label = (_ ?- _)),
+    !,
+    CombinedTerm = (Label ?- Q)-LVN,
+    Quads = [CombinedTerm, Term3|Quads_],
+    terms_quads(Terms, Quads_).
 terms_quads([Term1, Term2|Terms], Quads) :-
     Term1 = Q-_,
     (   Q = (?- _) ->
