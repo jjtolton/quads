@@ -42,8 +42,8 @@ check_quads_([Q-QVN, A-AVN|Rest], Module) :-
     check_qu_ad_in_module(Module, Q-QVN, A-AVN),
     check_quads_(Rest, Module).
 check_quads_([T-TVN, A-AVN|Rest], Module) :-
-    T = (_Label ?- Query),
-    check_binary_quad(Module, Query, A, TVN, AVN),
+    T = (Label ?- Query),
+    check_binary_quad(Module, Label, Query, A, TVN, AVN),
     check_quads_(Rest, Module).
 check_quads_([_|Rest], Module) :-
     check_quads_(Rest, Module).
@@ -99,11 +99,42 @@ zip([X|Xs], [Y|Ys], [X,Y|XYs]) :-
     zip(Xs, Ys, XYs).
 zip([], [], []).
 
-check_binary_quad(Module, Query, Answer, QVN, AVN) :-
-    (   check_binary_quad_(Module, Query, Answer, QVN, AVN) ->
-        format("quad(pass, ~q).~n", [Query])
-    ;   format("quad(fail, ~q).~n", [Query]),
-        fail
+check_binary_quad(Module, Label, Query, Answer, QVN, AVN) :-
+    catch(
+        (   check_binary_quad_(Module, Query, Answer, QVN, AVN) ->
+            determine_result(Answer, Result),
+            print_quad(Result, Label)
+        ;   determine_opposite_result(Answer, Result),
+            print_quad(Result, Label),
+            fail
+        ),
+        Error,
+        (print_quad(error(Error), Label), fail)
+    ).
+
+print_quad(Result, Label) :-
+    (   Label = [_|_], is_char_list(Label) ->
+        atom_chars(LabelAtom, Label),
+        format("quad(~q, ~q).~n", [Result, LabelAtom])
+    ;   format("quad(~q, ~q).~n", [Result, Label])
+    ).
+
+is_char_list([]).
+is_char_list([C|Cs]) :-
+    atom(C),
+    atom_length(C, 1),
+    is_char_list(Cs).
+
+determine_result(Answer, Result) :-
+    (   Answer == true -> Result = true
+    ;   Answer == false -> Result = false
+    ;   Result = true
+    ).
+
+determine_opposite_result(Answer, Result) :-
+    (   Answer == true -> Result = false
+    ;   Answer == false -> Result = true
+    ;   Result = false
     ).
 
 check_binary_quad_(Module, Query, Answer, QVN, AVN) :-
@@ -126,9 +157,10 @@ check_qu_ad(Q-QVN, A-AVN) :-
 
 check_qu_ad_in_module(Module, Q-QVN, A-AVN) :-
     Q = ?-(G),
-    (   check_qu_ad_in_module_(Module, G, A, QVN, AVN) ->
+    (   catch(check_qu_ad_in_module_(Module, G, A, QVN, AVN), Error,
+              (format("quad(error(~q), ~q).~n", [Error, A]), fail)) ->
         true
-    ;   format("quad(fail, ~q).~n", [A]),
+    ;   format("quad(false, ~q).~n", [A]),
         fail
     ).
 
